@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Médicos - Clínica Vida</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="page-painel">
+
+    <!-- Menu de Navegação Com Pacientes -->
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="{{ url_for('painel') }}">Início</a></li>
+            <li class="nav-item"><a href="{{ url_for('pacientes') }}">Pacientes</a></li>
+            <li class="nav-item"><a href="{{ url_for('usuarios') }}">Usuários</a></li>
+            <li class="nav-item"><a href="{{ url_for('medicos') }}" class="active">Médicos</a></li>
+            <li class="nav-item"><a href="{{ url_for('agendamentos') }}">Agendamentos</a></li>
+        </ul>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="{{ url_for('logout') }}" class="btn-logout">Sair</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-container">
+        <h2>Gerenciamento de Médicos - Clínica Vida</h2>
+
+        <!-- Formuário de Cadastro (Questão 7) -->
+        <div class="card-form">
+            <h3>Cadastrar Novo Médico</h3>
+            <form action="{{ url_for('medicos') }}" method="POST" class="form-crud">
+                <div class="input-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: Dr. Ricardo Mendes" required>
+                </div>
+                <div class="input-group">
+                    <label for="crm">CRM:</label>
+                    <input type="text" id="crm" name="crm" placeholder="Ex: 112233-SP" required>
+                </div>
+                <div class="input-group">
+                    <label for="especialidade">Especialidade:</label>
+                    <input type="text" id="especialidade" name="especialidade" placeholder="Ex: Cardiologia" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Telefone / E-mail:</label>
+                    <input type="text" id="email" name="email" placeholder="Ex: (11) 98888-7777 / med@email.com"
+                        required>
+                </div>
+                <button type="submit" class="btn-primary">Cadastrar</button>
+            </form>
+        </div>
+
+        <!-- Tabela de Listagem -->
+        <div class="card-table">
+            <h3>Médicos Cadastrados</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CRM</th>
+                        <th>Especialidade</th>
+                        <th>Telefone / E-mail</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in medicos %}
+                    <tr>
+                        <form action="{{ url_for('editar_medico', id=m['IDMEDICO']) }}" method="POST">
+                            <td>{{ m['IDMEDICO'] }}</td>
+                            <td><input type="text" name="nome" value="{{ m['NOME'] }}" required></td>
+                            <td><input type="text" name="crm" value="{{ m['CRM'] }}" required></td>
+                            <td><input type="text" name="especialidade" value="{{ m['ESPECIALIDADE'] }}" required></td>
+                            <td><input type="text" name="email" value="{{ m['EMAIL'] if m['EMAIL'] else '' }}" required>
+                            </td>
+                            <td class="action-buttons">
+                                <button type="submit" class="btn-edit">Salvar</button>
+                        </form>
+                        <form action="{{ url_for('excluir_medico', id=m['IDMEDICO']) }}" method="POST"
+                            style="display:inline;">
+                            <button type="submit" class="btn-delete"
+                                onclick="return confirm('Deseja realmente excluir este médico?')">Excluir</button>
+                        </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;">Nenhum médico cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Usuários - Clínica Vida</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="page-painel">
+
+    <!-- Menu de Navegação Com Pacientes -->
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="{{ url_for('painel') }}">Início</a></li>
+            <li class="nav-item"><a href="{{ url_for('pacientes') }}">Pacientes</a></li>
+            <li class="nav-item"><a href="{{ url_for('usuarios') }}" class="active">Usuários</a></li>
+            <li class="nav-item"><a href="{{ url_for('medicos') }}">Médicos</a></li>
+            <li class="nav-item"><a href="{{ url_for('agendamentos') }}">Agendamentos</a></li>
+        </ul>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="{{ url_for('logout') }}" class="btn-logout">Sair</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-container">
+        <h2>Gerenciamento de Usuários - Clínica Vida</h2>
+
+        <!-- Formuário de Cadastro (Questão 6) -->
+        <div class="card-form">
+            <h3>Cadastrar Novo Usuário</h3>
+            <form action="{{ url_for('usuarios') }}" method="POST" class="form-crud">
+                <div class="input-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Digite o nome" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" placeholder="Digite o e-mail" required>
+                </div>
+                <div class="input-group">
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" placeholder="Digite a senha" required>
+                </div>
+                <div class="input-group">
+                    <label for="tipo">Tipo:</label>
+                    <select id="tipo" name="tipo" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Médico">Médico</option>
+                        <option value="Atendente" selected>Atendente</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Cadastrar</button>
+            </form>
+        </div>
+
+        <!-- Tabela de Listagem -->
+        <div class="card-table">
+            <h3>Usuários Cadastrados</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Senha</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <form action="{{ url_for('editar_usuario', id=u['IDUSUARIO']) }}" method="POST">
+                            <td>{{ u['IDUSUARIO'] }}</td>
+                            <td><input type="text" name="nome" value="{{ u['NOME'] }}" required></td>
+                            <td><input type="email" name="email" value="{{ u['EMAIL'] }}" required></td>
+                            <td><input type="password" name="senha" value="{{ u['SENHA'] }}" required></td>
+                            <td>{{ u['TIPO'] }}</td>
+                            <td class="action-buttons">
+                                <button type="submit" class="btn-edit">Salvar</button>
+                        </form>
+                        <form action="{{ url_for('excluir_usuario', id=u['IDUSUARIO']) }}" method="POST"
+                            style="display:inline;">
+                            <button type="submit" class="btn-delete"
+                                onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
+                        </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;">Nenhum usuário cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+
+</html>

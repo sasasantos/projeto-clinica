@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Pacientes - Clínica Vida</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="page-painel">
+
+    <!-- Menu de Navegação -->
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="{{ url_for('painel') }}">Início</a></li>
+            <li class="nav-item"><a href="{{ url_for('pacientes') }}" class="active">Pacientes</a></li>
+            <li class="nav-item"><a href="{{ url_for('usuarios') }}">Usuários</a></li>
+            <li class="nav-item"><a href="{{ url_for('medicos') }}">Médicos</a></li>
+            <li class="nav-item"><a href="{{ url_for('agendamentos') }}">Agendamentos</a></li>
+        </ul>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="{{ url_for('logout') }}" class="btn-logout">Sair</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-container">
+        <h2>Gerenciamento de Pacientes - Clínica Vida</h2>
+
+        <!-- Formulário de Cadastro Exigido na Questão 8 -->
+        <div class="card-form">
+            <h3>Cadastrar Novo Paciente</h3>
+            <form action="{{ url_for('pacientes') }}" method="POST" class="form-crud">
+                <div class="input-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: Maria Silva" required>
+                </div>
+                <div class="input-group">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="Ex: 123.456.789-00" required>
+                </div>
+                <div class="input-group">
+                    <label for="data_nascimento">Data de Nascimento:</label>
+                    <input type="date" id="data_nascimento" name="data_nascimento" required>
+                </div>
+                <div class="input-group">
+                    <label for="telefone">Telefone:</label>
+                    <input type="text" id="telefone" name="telefone" placeholder="Ex: (11) 99999-8888" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Endereço / E-mail:</label>
+                    <input type="text" id="email" name="email" placeholder="Ex: Rua A, 123 / paciente@email.com"
+                        required>
+                </div>
+                <button type="submit" class="btn-primary">Cadastrar</button>
+            </form>
+        </div>
+
+        <!-- Tabela de Listagem, Edição e Exclusão -->
+        <div class="card-table">
+            <h3>Pacientes Cadastrados</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Data de Nascimento</th>
+                        <th>Telefone</th>
+                        <th>Endereço / E-mail</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pacientes %}
+                    <tr>
+                        <form action="{{ url_for('editar_paciente', id=p['IDPACIENTES']) }}" method="POST">
+                            <td>{{ p['IDPACIENTES'] }}</td>
+                            <td><input type="text" name="nome" value="{{ p['NOME'] }}" required></td>
+                            <td><input type="text" name="cpf" value="{{ p['CPF'] }}" required></td>
+                            <td><input type="text" name="data_nascimento" value="{{ p['DATA_NASCIMENTO'] }}" required>
+                            </td>
+                            <td><input type="text" name="telefone" value="{{ p['TELEFONE'] }}" required></td>
+                            <td><input type="text" name="email" value="{{ p['EMAIL'] }}" required></td>
+                            <td class="action-buttons">
+                                <button type="submit" class="btn-edit">Salvar</button>
+                        </form>
+                        <form action="{{ url_for('excluir_paciente', id=p['IDPACIENTES']) }}" method="POST"
+                            style="display:inline;">
+                            <button type="submit" class="btn-delete"
+                                onclick="return confirm('Deseja realmente excluir este paciente?')">Excluir</button>
+                        </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center;">Nenhum paciente cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+
+</html>

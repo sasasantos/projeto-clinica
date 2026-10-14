@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Agendamentos - Clínica Vida</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="page-painel">
+
+  <nav class="navbar">
+    <ul class="nav-list">
+      <li class="nav-item"><a href="{{ url_for('painel') }}">Início</a></li>
+      <li class="nav-item"><a href="{{ url_for('pacientes') }}">Pacientes</a></li>
+      <li class="nav-item"><a href="{{ url_for('usuarios') }}">Usuários</a></li>
+      <li class="nav-item"><a href="{{ url_for('medicos') }}">Médicos</a></li>
+      <li class="nav-item"><a href="{{ url_for('agendamentos') }}" class="active">Agendamentos</a></li>
+    </ul>
+    <ul class="nav-list">
+      <li class="nav-item"><a href="{{ url_for('logout') }}" class="btn-logout">Sair</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <h2>Gerenciamento de Agendamentos</h2>
+
+    {% if erro %}
+      <div class="alert-error">
+        <strong>Atenção:</strong> {{ erro }}
+      </div>
+    {% endif %}
+
+    <!-- Form com todos os campos OBRIGATÓRIOS (required) -->
+    <div class="card-form">
+      <h3>Novo Agendamento</h3>
+      <form action="{{ url_for('agendamentos') }}" method="POST" class="form-crud">
+        
+        <div class="input-group">
+          <label for="paciente_id" class="required">Paciente:</label>
+          <select id="paciente_id" name="paciente_id" required>
+            <option value="" disabled selected>Selecione um paciente...</option>
+            {% for p in pacientes %}
+              <option value="{{ p['IDPACIENTES'] }}">{{ p['NOME'] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="medico_id" class="required">Médico:</label>
+          <select id="medico_id" name="medico_id" required>
+            <option value="" disabled selected>Selecione um médico...</option>
+            {% for m in medicos %}
+              <option value="{{ m['IDMEDICO'] }}">{{ m['NOME'] }} ({{ m['ESPECIALIDADE'] }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="data" class="required">Data da Consulta:</label>
+          <input type="date" id="data" name="data" required>
+        </div>
+
+        <div class="input-group">
+          <label for="horario" class="required">Horário:</label>
+          <input type="time" id="horario" name="horario" required>
+        </div>
+
+        <div class="input-group" style="flex-basis: 100%;">
+          <label for="descricao" class="required">Descrição / Motivo:</label>
+          <input type="text" id="descricao" name="descricao" placeholder="Ex: Consulta de Rotina" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Confirmar Agendamento</button>
+      </form>
+    </div>
+
+    <!-- Tabela de Agendamentos -->
+    <div class="card-table">
+      <h3>Consultas Agendadas</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Paciente</th>
+            <th>Médico</th>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in agendamentos %}
+          <tr>
+            <form action="{{ url_for('editar_agendamento', id=a['id_agendamento']) }}" method="POST">
+              <td><strong>#{{ a['id_agendamento'] }}</strong></td>
+              <td><strong>{{ a['NOME_PACIENTE'] }}</strong></td>
+              <td>{{ a['NOME_MEDICO'] }}</td>
+              <td><input type="date" name="data" value="{{ a['DATA_CONSULTA'] }}" required></td>
+              <td><input type="time" name="horario" value="{{ a['HORA_CONSULTA'] }}" required></td>
+              <td><input type="text" name="descricao" value="{{ a['OBSERVACAO'] }}" required></td>
+              <td class="action-buttons">
+                <button type="submit" class="btn-edit">Salvar</button>
+            </form>
+                <form action="{{ url_for('cancelar_agendamento', id=a['id_agendamento']) }}" method="POST" style="display:inline;">
+                  <button type="submit" class="btn-delete" onclick="return confirm('Deseja realmente cancelar este agendamento?')">Cancelar</button>
+                </form>
+              </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" style="text-align:center; color: var(--text-muted); padding: 2rem;">Nenhum agendamento encontrado no sistema.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>
